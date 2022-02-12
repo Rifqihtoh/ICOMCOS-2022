@@ -1,6 +1,11 @@
 <?php
 
+use App\Http\Controllers\ParticipantController;
+use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\WorkshopController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +22,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth'])->name('dashboard');
+
+
+Route::group(['middleware' => ['role:user']], function() {
+    Route::get('/dashboard', [UserController::class, 'welcome'])->name('dashboard');
+    Route::resource('submission', SubmissionController::class);
+    Route::resource('workshop', WorkshopController::class);
+    Route::resource('participant', ParticipantController::class);
+});
 
 require __DIR__.'/auth.php';
